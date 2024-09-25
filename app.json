@@ -16,7 +16,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
+        "foregroundImage": "./assets/adaptative.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.cmarko.marriageexpojs"

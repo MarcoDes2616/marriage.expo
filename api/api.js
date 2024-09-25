@@ -4,7 +4,6 @@ import axiosInstance from './axios';
 export const fetchAllGuests = async () => {
   try {
     const {data} = await axiosInstance.get('/guest');
-    console.log(data);
     return data;
   } catch (error) {
     console.error('Error fetching guests:', error);
