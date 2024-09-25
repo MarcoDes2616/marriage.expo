@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "marriage.expo.js",
-    "slug": "marriage.expo.js",
+    "slug": "marriageexpojs",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -18,10 +18,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.cmarko.marriageexpojs"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "49ba8add-70d8-4184-a9b7-dbf4169325bb"
+      }
+    },
+    "owner": "cmarko"
   }
 }
