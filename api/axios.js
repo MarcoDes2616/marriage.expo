@@ -1,8 +1,8 @@
 import axios from 'axios';
-import { API_BASE_URL } from '@env'; // Importa la variable de entorno
+import { EXPO_PUBLIC_API } from '@env';
 
 const axiosInstance = axios.create({
-  baseURL: API_BASE_URL, // Usa la URL base de las variables de entorno
+  baseURL: EXPO_PUBLIC_API,
   headers: {
     'Content-Type': 'application/json',
   },
