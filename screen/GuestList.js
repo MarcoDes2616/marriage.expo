@@ -1,21 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet } from "react-native";
-import { fetchAllGuests } from '../api/api';
+import { fetchAllGuests } from "../api/api";
 
 const GuestList = () => {
-    const [guests, setGuests] = useState([]);
+  const [guests, setGuests] = useState([]);
 
   useEffect(() => {
-    getGuests();
+    fetchData();
   }, []);
-  const getGuests = async () => {
-    try {
-      const data = await fetchAllGuests();
-      setGuests(data);
-    } catch (error) {
-      console.error('Error fetching guests:', error);
-    }
-  };
+
+  const fetchData = async() => {
+    const response = fetchAllGuests()
+    setGuests(response)
+  }
   console.log(guests);
   
   return (

@@ -1,10 +1,11 @@
-import axiosInstance from './axiosInstance';
+import axiosInstance from './axios';
 
 // Fetch all guests
 export const fetchAllGuests = async () => {
   try {
-    const response = await axiosInstance.get('/guests');
-    return response.data;
+    const {data} = await axiosInstance.get('/guest');
+    console.log(data);
+    return data;
   } catch (error) {
     console.error('Error fetching guests:', error);
     throw error;
@@ -14,7 +15,7 @@ export const fetchAllGuests = async () => {
 // Fetch a single guest by ID
 export const fetchGuestById = async (id) => {
   try {
-    const response = await axiosInstance.get(`/guests/${id}`);
+    const response = await axiosInstance.get(`/guest/${id}`);
     return response.data;
   } catch (error) {
     console.error(`Error fetching guest with ID ${id}:`, error);
@@ -25,7 +26,7 @@ export const fetchGuestById = async (id) => {
 // Create a new guest
 export const createGuest = async (guestData) => {
   try {
-    const response = await axiosInstance.post('/guests', guestData);
+    const response = await axiosInstance.post('/guest', guestData);
     return response.data;
   } catch (error) {
     console.error('Error creating guest:', error);
@@ -36,7 +37,7 @@ export const createGuest = async (guestData) => {
 // Update guest by ID
 export const updateGuest = async (id, guestData) => {
   try {
-    const response = await axiosInstance.put(`/guests/${id}`, guestData);
+    const response = await axiosInstance.put(`/guest/${id}`, guestData);
     return response.data;
   } catch (error) {
     console.error(`Error updating guest with ID ${id}:`, error);
@@ -47,7 +48,7 @@ export const updateGuest = async (id, guestData) => {
 // Delete guest by ID
 export const deleteGuest = async (id) => {
   try {
-    const response = await axiosInstance.delete(`/guests/${id}`);
+    const response = await axiosInstance.delete(`/guest/${id}`);
     return response.data;
   } catch (error) {
     console.error(`Error deleting guest with ID ${id}:`, error);
@@ -58,7 +59,7 @@ export const deleteGuest = async (id) => {
 // Send invitation to guest
 export const sendInvitation = async (id) => {
   try {
-    const response = await axiosInstance.post(`/guests/send_invitation/${id}`);
+    const response = await axiosInstance.post(`/guest/send_invitation/${id}`);
     return response.data;
   } catch (error) {
     console.error(`Error sending invitation to guest with ID ${id}:`, error);
