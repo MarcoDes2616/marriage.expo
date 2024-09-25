@@ -1,14 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet, FlatList, TouchableOpacity, Linking, Alert } from "react-native";
-import { fetchAllGuests, sendInvitation } from "../api/api";
-import { FontAwesome } from '@expo/vector-icons'; // Para usar iconos
+import { Text, View, StyleSheet, FlatList, TouchableOpacity, Linking, Alert, Modal, Button, TextInput } from "react-native";
+import {Picker} from "@react-native-picker/picker" //@react-native-picker/picker
+import { fetchAllGuests, sendInvitation, createGuest } from "../api/api";
+import {fetchAllRoles} from "../api/role_api"
+import {fetchAllTitles} from "../api/title_api" // Import your API functions
+import { FontAwesome } from '@expo/vector-icons';
 
 const GuestList = () => {
+  const initialValues = { first_name: '', last_name: '', phone: '', email: '', roleId: null }
   const [guests, setGuests] = useState([]);
+  const [roles, setRoles] = useState([]);
+  const [titles, setTitles] = useState([]); // State for roles
+  const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
+  const [newGuest, setNewGuest] = useState(initialValues); // New guest details
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (modalVisible) {
+      fetchRoles()
+      fetchTitles()
+    }
+  }, [modalVisible])
 
   const fetchData = async () => {
     try {
@@ -19,12 +34,30 @@ const GuestList = () => {
     }
   };
 
+  const fetchRoles = async () => {
+    try {
+      const response = await fetchAllRoles();
+      setRoles(response); // Assuming response is an array of roles
+    } catch (error) {
+      console.error("Error fetching roles:", error);
+    }
+  };
+
+  const fetchTitles = async () => {
+    try {
+      const response = await fetchAllTitles();
+      setTitles(response);
+       // Assuming response is an array of roles
+    } catch (error) {
+      console.error("Error fetching titles:", error);
+    }
+  };
+
   const handleSendInvitation = async (id) => {
     try {
       await sendInvitation(id);
       Alert.alert("Invitación enviada", `Se ha enviado la invitación al invitado con ID: ${id}`);
-      // Refrescar los datos después de enviar la invitación
-      fetchData();
+      fetchData(); // Refresh the guest list
     } catch (error) {
       Alert.alert("Error", "Hubo un error al enviar la invitación.");
     }
@@ -36,6 +69,17 @@ const GuestList = () => {
     Linking.openURL(url).catch(() => {
       Alert.alert("Error", "No se pudo abrir WhatsApp.");
     });
+  };
+
+  const handleCreateGuest = async () => {
+    try {
+      await createGuest(newGuest); // Assume this function handles guest creation
+      setModalVisible(false); // Close the modal
+      setNewGuest(initialValues); // Reset form
+      fetchData(); // Refresh the guest list
+    } catch (error) {
+      Alert.alert("Error", "Hubo un error al agregar el invitado.");
+    }
   };
 
   const renderGuest = ({ item }) => (
@@ -77,12 +121,75 @@ const GuestList = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Lista de Invitados</Text>
+      <Button title="Agregar Invitado" onPress={() => setModalVisible(true)} />
+
       <FlatList
         data={guests}
         keyExtractor={(item) => item.id.toString()}
         renderItem={renderGuest}
         contentContainerStyle={styles.list}
       />
+
+      {/* Modal for adding a new guest */}
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalHeader}>Agregar Nuevo Invitado</Text>
+          <Picker
+            selectedValue={newGuest.titleId}
+            onValueChange={(itemValue) => setNewGuest({ ...newGuest, titleId: itemValue })}
+            style={styles.picker}
+          >
+            <Picker.Item label="Titulo" value={null} />
+            {titles.map(title => (
+              <Picker.Item key={title.id} label={title.title} value={title.id} />
+            ))}
+          </Picker>
+          <TextInput
+            style={styles.input}
+            placeholder="Nombre"
+            value={newGuest.first_name}
+            onChangeText={(text) => setNewGuest({ ...newGuest, first_name: text })}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Apellido"
+            value={newGuest.last_name}
+            onChangeText={(text) => setNewGuest({ ...newGuest, last_name: text })}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Teléfono"
+            value={newGuest.phone}
+            onChangeText={(text) => setNewGuest({ ...newGuest, phone: text })}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={newGuest.email}
+            onChangeText={(text) => setNewGuest({ ...newGuest, email: text })}
+          />
+          
+          {/* Role Picker */}
+          <Picker
+            selectedValue={newGuest.roleId}
+            onValueChange={(itemValue) => setNewGuest({ ...newGuest, roleId: itemValue })}
+            style={styles.picker}
+          >
+            <Picker.Item label="Seleccione un rol" value={null} />
+            {roles.map(role => (
+              <Picker.Item key={role.id} label={role.role_name} value={role.id} />
+            ))}
+          </Picker>
+
+          <Button title="Agregar Invitado" onPress={handleCreateGuest} />
+          <Button title="Cancelar" onPress={() => setModalVisible(false)} />
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -142,6 +249,31 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 16,
     color: "#555",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    padding: 20,
+  },
+  modalHeader: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 15,
+    width: "100%",
+  },
+  picker: {
+    height: 50,
+    width: "100%",
+    marginBottom: 15,
   },
 });
 
