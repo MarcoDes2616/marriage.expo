@@ -12,12 +12,18 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API": "https://marriedserver-production.up.railway.app/api/v1"
       }
     },
     "production": {
       "distribution": "store",
       "android": {
         "buildType": "app-bundle"
+      },
+      "env": {
+        "EXPO_PUBLIC_API": "https://marriedserver-production.up.railway.app/api/v1"
       },
       "autoIncrement": true
     }
