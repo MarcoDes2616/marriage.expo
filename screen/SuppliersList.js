@@ -1,15 +1,14 @@
 import React from "react";
 import { Text, View, StyleSheet } from "react-native";
-
-const GuestList = () => {
+const SuppliersList = () => {
   return (
     <View style={styles.container}>
-      <Text>Pantalla de Invitados</Text>
+      <Text>Pantalla de Proveedores</Text>
     </View>
   );
 };
 
-export default GuestList;
+export default SuppliersList;
 
 const styles = StyleSheet.create({
   container: {
